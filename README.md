@@ -13,3 +13,8 @@ This is a small project for the visualization of data from Tour de France
 ```
 > run.sh
 ```
+## Update code ##
+To update code, make changes in source files and then update public folder with ``gulp update``
+```
+> gulp update
+```
