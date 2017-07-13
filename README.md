@@ -1,1 +1,3 @@
-# vis_tour_de_france
+# README #
+
+This is a small project for the visualization of data from Tour de France
