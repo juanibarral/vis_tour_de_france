@@ -22,7 +22,7 @@ var tour_de_france_vis = function(params){
 	}
 
 	this.padding = {
-		top : 50,
+		top : 20,
 		bottom : 50,
 		left : 100,
 		right : 50,
@@ -46,56 +46,56 @@ var tour_de_france_vis = function(params){
 	this.g = this.svg.append("g");
 
 	this.current_data = undefined;
+	this.current_raw_data = undefined;
 	this.scaleX = d3.scaleLinear().domain([0, 20]).range([_this.padding.left, _this.padding.left + _this.chart.width]);
 	this.posScaleY = undefined;
 	this.diffScaleY = undefined;
 
-	drawLegend(this);
 
+	this.stage_types = 
+	{
+		flat : {
+			label : "flat",
+			color : "#b2df8a",
+			icon  : "../../images/20px-Plainstage.png"
+		},
+		medium : {
+			label : "medium",
+			color : "#ffff99",
+			icon  : "images/20px-Mediummountainstage.png"
+		},
+		high : {
+			label : "high",
+			color : "#b15928",
+			icon  : "images/20px-Mountainstage.png"
+		},
+		chrono : {
+			label : "chrono",
+			color : "#ddd",
+			icon  : "images/20px-Time_Trial.png"
+		},
+	}
+
+	this.stages = [];
+
+	for(i in params.stages)
+	{
+		(function(index){
+			var stg = _this.stage_types[params.stages[parseInt(index)]];
+			_this.stages.push({
+				label : stg.label,
+				color : stg.color,
+				icon : stg.icon,
+				stage : parseInt(index) + 1
+			});
+		})(i);
+	}
+
+	drawLegend(this);
 }
 
 var drawLegend = function(_this)
 {
-	var types = [
-		"flat",		//Stage 1
-		"flat",		//Stage 2
-		"flat",		//Stage 3
-		"flat",		//Stage 4
-		"medium",	//Stage 5
-		"flat",		//Stage 6
-		"medium",	//Stage 7
-		"high",		//Stage 8
-		"high",		//Stage 9
-		"medium",	//Stage 10
-		"flat",		//Stage 11
-		"high",		//Stage 12
-		"time",		//Stage 13
-		"flat",		//Stage 14
-		"high",		//Stage 15
-		"flat",		//Stage 16
-		"high",		//Stage 17
-		"time",		//Stage 18
-		"high",		//Stage 19
-		"high",		//Stage 20
-		"flat",		//Stage 21
-	]
-
-	var colors = {
-		flat   : "#b2df8a",
-		medium : "#ffff99",
-		high   : "#b15928",
-		time   : "#ddd"
-	}
-
-	var icons = {
-		flat   : "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Plainstage.svg/20px-Plainstage.svg",
-		medium : "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Mediummountainstage.svg/20px-Mediummountainstage.svg",
-		high   : "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Mountainstage.svg/20px-Mountainstage.svg",
-		time   : "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Time_Trial.svg/20px-Time_Trial.svg"
-	}
-
-
-
 	var rect_width = _this.chart.width / 21;
 	var left_legend = _this.padding.left - (rect_width * 0.5);
 	_this.g.append("line")
@@ -130,23 +130,25 @@ var drawLegend = function(_this)
 		.style("stroke", "black")
 		.style("stroke-width", 1)
 
-	//var scaleX = d3.scaleLinear().domain([0, 20]).range([_this.padding.left, _this.padding.left + _this.chart.width]);
 	
-	var rect_data = []
-	for(var index = 0; index <21; index++)
-	{
-		rect_data.push({
-			color : colors[types[index]],
-			icon : icons[types[index]]
-		});
-		
-	}
 
+}
 
-	var rect_legend = _this.g.selectAll(".rect_legend").data(rect_data)
+var updateLegend = function(_this)
+{
+	d3.selectAll(".rect_legend").remove();
+	d3.selectAll(".stage_icon").remove();
+	d3.selectAll(".stage_label").remove();
+
+	var rect_width = _this.chart.width / 21;
+	var rect_legend = _this.g.selectAll(".rect_legend").data(_this.stages)
 	rect_legend.enter()
 		.append("rect")
 		.attr("class", "rect_legend")
+		.attr("id", function(d,i){
+			var id = "rect_legend_" + d.stage;
+			return id;
+		})
 		.attr("x", function(d,i){
 			return _this.scaleX(i) - (rect_width * 0.5)
 		})
@@ -158,18 +160,18 @@ var drawLegend = function(_this)
 		})
 		.style("fill-opacity", 0.3)
 		//.style("stroke", "black")
-		.on("mouseover", function(d, i)
-		{
-			d3.select(this).style("fill-opacity", 0.9);
-			drawRiderInfo(_this, i);
-		})
-		.on("mouseout", function(d, i)
-		{
-			d3.select(this).style("fill-opacity", 0.3);	
-			removeRiderInfo(_this, i);
-		})
+		// .on("mouseover", function(d, i)
+		// {
+		// 	d3.select(this).style("fill-opacity", 0.9);
+		// 	drawRiderInfo(_this, i);
+		// })
+		// .on("mouseout", function(d, i)
+		// {
+		// 	d3.select(this).style("fill-opacity", 0.3);	
+		// 	removeRiderInfo(_this, i);
+		// })
 
-	var stage_icons = _this.g.selectAll(".stage_icon").data(rect_data)
+	var stage_icons = _this.g.selectAll(".stage_icon").data(_this.stages)
 	stage_icons.enter()
 		.append("svg:image")
 		.attr("class", "stage_icon")
@@ -183,6 +185,48 @@ var drawLegend = function(_this)
 		})
 		.attr("y",_this.padding.top + _this.chart.height + 25);
 
+	var stage_labels = _this.g.selectAll(".stage_label").data(_this.stages)
+	stage_labels.enter()
+		.append("text")
+		.attr("class", "stage_label")
+		.attr("x", function(d,i){
+			return _this.scaleX(i);
+		})
+		.attr("y",_this.padding.top + _this.chart.height + 5)
+		.style("text-anchor", "middle")
+		.style("alignment-baseline", "hanging")
+		.text(function(d,i){
+			return d.stage;
+		});
+}
+
+var updateClickeable = function(_this)
+{
+	d3.selectAll(".rect_clickeable").remove();
+	
+	var rect_width = _this.chart.width / 21;
+	var rect_legend = _this.g.selectAll(".rect_clickeable").data(_this.stages)
+	rect_legend.enter()
+		.append("rect")
+		.attr("class", "rect_clickeable")
+		.attr("x", function(d,i){
+			return _this.scaleX(i) - (rect_width * 0.5)
+		})
+		.attr("y",_this.padding.top)
+		.attr("width",rect_width)
+		.attr("height",_this.chart.height)
+		.style("fill", "#AAA")
+		.style("fill-opacity", 0)
+		.on("mouseover", function(d, i)
+		{
+			d3.select("#rect_legend_" + d.stage).style("fill-opacity", 0.9);
+			drawRiderInfo(_this, i);
+		})
+		.on("mouseout", function(d, i)
+		{
+			d3.select("#rect_legend_" + d.stage).style("fill-opacity", 0.3);	
+			removeRiderInfo(_this, i);
+		})
 }
 
 var drawRiderInfo = function(_this, rider_index)
@@ -222,9 +266,75 @@ var removeRiderInfo = function(_this, i)
 	}
 }
 
-tour_de_france_vis.prototype.setData = function(data)
+tour_de_france_vis.prototype.sort = function(sorted)
+{
+	var new_stages = [];
+	if(sorted)
+	{
+		for(i in sorted)
+		{
+			for(j in this.stages)
+			{
+				if(this.stages[j].label == sorted[i])
+					new_stages.push(this.stages[j]);
+			}
+		}
+	}
+	else
+	{
+		new_stages = this.stages.sort(function(a,b){
+			var x = parseInt(a.stage);
+			var y = parseInt(b.stage);
+
+			if(x > y)
+			{
+				return 1;
+			}
+			else if( x < y)
+			{
+				return -1;
+			}
+			else
+				return 0;
+		})
+	}
+
+	this.stages = new_stages;
+	
+	this.setData(this.current_raw_data);
+}
+
+tour_de_france_vis.prototype.setData = function(rawdata)
 {
 	var _this = this;
+	_this.current_raw_data = rawdata;
+	
+	updateLegend(_this);
+
+	var data = [];
+	for(i in rawdata)
+	{
+		var r = rawdata[i];
+		var sorted_diffs = [];
+		var sorted_diffs_string = [];
+		var sorted_positions = [];
+		for(j in _this.stages)
+		{
+			var stage = _this.stages[j].stage;
+			var index = parseInt(stage) - 1;
+			sorted_diffs.push(r.diffs[parseInt(index)]);
+			sorted_diffs_string.push(r.diffs_string[parseInt(index)]);
+			sorted_positions.push(r.positions[parseInt(index)]);
+		}
+
+		data.push({
+			diffs : sorted_diffs,
+			diffs_string : sorted_diffs_string,
+			number : r.number,
+			positions : sorted_positions
+		})
+	}
+	
 	_this.current_data = data;
 	d3.selectAll(".pos_paths").remove();
 	d3.selectAll(".diff_paths").remove();
@@ -296,6 +406,7 @@ tour_de_france_vis.prototype.setData = function(data)
 		.style("fill-opacity", graph_opacity)
 		//.style("stroke", "#AAA")
 	
+	updateClickeable(_this);
 }
 
 module.exports = {

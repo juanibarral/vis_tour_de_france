@@ -20,20 +20,25 @@ app.post('/scrapper', function (req, res) {
                     stage : ('stage_0' + i).slice(-2)});
     }
 
-	async.each(urls, 
-        function(url, callback){
-            processUrl(url.url, url.stage, callback)
-        }, 
-        function(err)
-        {
-            if( err ) {
-              console.log('A file failed to process');
-              res.json({success : false, message : 'A file failed to process'})
-            } else {
-            	res.json({success : true, data : jsonDataTotal})
-            }
-        }
-    );
+
+    processUrl(urls[0], 'stage_01', function(html){
+        res.send(html);
+        //res.json(html);
+    })
+	// async.each(urls, 
+ //        function(url, callback){
+ //            processUrl(url.url, url.stage, callback)
+ //        }, 
+ //        function(err)
+ //        {
+ //            if( err ) {
+ //              console.log('A file failed to process');
+ //              res.json({success : false, message : 'A file failed to process'})
+ //            } else {
+ //            	res.json({success : true, data : jsonDataTotal})
+ //            }
+ //        }
+ //    );
 
     
 });
@@ -49,17 +54,20 @@ var processUrl = function(url, stage, callback)
             var $ = cheerio.load(html);
             var jsonData = {};
             console.log("html read");
-            var trs = $(this).find("table.rankingList tr");
+            var trs = $("table.rankingList tr");
             
-            //console.log(trs);
+            console.log(trs);
             //var trs = table.find("tr");
+            var i = 0;
             for(tr_index in trs)
             {
-            	console.log("***********************tr_index**********************");
-            	console.log(tr_index);
-            	// var tr = trs[tr_index];
-             //    if(tr.children && tr.children[0])
-             //    {
+                i++;
+            	console.log("***********************tr_index " + i + "**********************");
+            	
+            	var tr = trs[tr_index];
+                if(tr.children && tr.children[0])
+                {
+                    console.log(tr.children[0])
                     // var newVal = {
                     //     name : "",
                     //     value : "",
@@ -83,11 +91,11 @@ var processUrl = function(url, stage, callback)
                     // {
                     //     jsonData["table_" + table_index].data.push(newVal)
                     // }
-                // }
+                }
             }
             
             jsonDataTotal[stage] = jsonData;
-            callback();
+            callback(html);
         }
     })
 }

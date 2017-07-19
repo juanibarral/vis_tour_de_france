@@ -93,6 +93,7 @@ gulp.task('copy_images_files', function() {
 //Concat css files for app into one bundle file (budle_app.css)
 gulp.task('concat_app_css', function(){
 	return gulp.src([
+			'./node_modules/angular-material/angular-material.css',
 			//***************************************
 			//ADD HERE EXTRA CSS FILES
 			//***************************************

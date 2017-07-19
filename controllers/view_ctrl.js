@@ -14,9 +14,12 @@ var view = require("./tour_de_france_vis.js");
 
 my_app.controller('view_ctrl', ['$scope', '$location', function($scope, $location){
 	$scope.labels = {
-		title : "Tour de France 2016"
+		title : "Tour de France 2016",
+		button_1 : "Ordenar por tipo de etapa",
+		button_2 : "Ordenar por número de etapa"
 	};
 
+	$scope.button = $scope.labels.button_1;
 	$scope.riders = [];
 	$scope.selected_rider
 	
@@ -38,11 +41,37 @@ my_app.controller('view_ctrl', ['$scope', '$location', function($scope, $locatio
 			return -1;
 		return 0;
 	});
+	$scope.selected_rider = $scope.riders[0]
 	$scope.$applyAsync();
+
+
 
 	var vis = new view.tour_de_france_vis(
 	{
 		bindto : "#tour_chart",
+		stages : [
+			"flat",		//Stage 1
+			"flat",		//Stage 2
+			"flat",		//Stage 3
+			"flat",		//Stage 4
+			"medium",	//Stage 5
+			"flat",		//Stage 6
+			"medium",	//Stage 7
+			"high",		//Stage 8
+			"high",		//Stage 9
+			"medium",	//Stage 10
+			"flat",		//Stage 11
+			"high",		//Stage 12
+			"chrono",	//Stage 13
+			"flat",		//Stage 14
+			"high",		//Stage 15
+			"flat",		//Stage 16
+			"high",		//Stage 17
+			"chrono",	//Stage 18
+			"high",		//Stage 19
+			"high",		//Stage 20
+			"flat",		//Stage 21
+		]
 	});
 
 
@@ -118,7 +147,22 @@ my_app.controller('view_ctrl', ['$scope', '$location', function($scope, $locatio
 		vis.setData(data);
 	}
 
+	$scope.sort = function()
+	{
+		if($scope.button == $scope.labels.button_1)
+		{
+			$scope.button = $scope.labels.button_2;
+			$scope.$applyAsync();
+			vis.sort(["flat", "medium", "high", "chrono"]);
+		}
+		else
+		{
+			$scope.button = $scope.labels.button_1;
+			$scope.$applyAsync();
+			vis.sort();
 
+		}
+	}
 
 
 }]);

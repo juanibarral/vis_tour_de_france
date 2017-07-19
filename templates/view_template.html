@@ -1,7 +1,15 @@
 <div id="content" layout="column">
 	<h1>{{labels.title}}</h1>
-	<select name="rider_select" ng-model="selected_rider" ng-change="setRider()">
-		<option ng-repeat="r in riders" value="{{r}}">{{r.number}} - {{r.name}}</option>
-    </select>
+	<div layout="row">
+		<div flex="30">
+			<select name="rider_select" ng-model="selected_rider" ng-change="setRider()">
+				<option ng-repeat="r in riders" value="{{r}}">{{r.number}} - {{r.name}}</option>
+	    	</select>
+	    </div>
+	    <div flex="20">
+	    	<md-button  class="md-raised" ng-click="sort()">{{button}}</md-button>
+	    </div>
+	</div>
+	
 	<div id="tour_chart"></div>
 </div>	
