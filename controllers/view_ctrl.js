@@ -101,7 +101,9 @@ my_app.controller('view_ctrl', ['$scope', '$location', function($scope, $locatio
 	// 	}
 	// }
 
-	// vis.setData(data);
+	// vis.setData(data);\\
+
+	var full_data = [];
 
 	$scope.setRider = function()
 	{
@@ -144,7 +146,15 @@ my_app.controller('view_ctrl', ['$scope', '$location', function($scope, $locatio
 
 		}
 
-		vis.setData(data);
+
+		if(full_data.length == 0)
+			full_data.push(data);
+		else if(full_data.length == 1)
+			full_data.push(data);
+		else
+			full_data
+
+		vis.setData(full_data);
 	}
 
 	$scope.sort = function()
