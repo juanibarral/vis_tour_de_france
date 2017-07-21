@@ -152,7 +152,7 @@ my_app.controller('view_ctrl', ['$scope', '$location', function($scope, $locatio
 		else if(full_data.length == 1)
 			full_data.push(data);
 		else
-			full_data
+			full_data[0] = data;
 
 		vis.setData(full_data);
 	}

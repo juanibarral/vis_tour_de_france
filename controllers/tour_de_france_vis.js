@@ -364,9 +364,9 @@ tour_de_france_vis.prototype.setData = function(rawdata)
 		{
 			var stage = _this.stages[j].stage;
 			var index = parseInt(stage) - 1;
-			sorted_diffs.push(r.diffs[parseInt(index)]);
-			sorted_diffs_string.push(r.diffs_string[parseInt(index)]);
-			sorted_positions.push(r.positions[parseInt(index)]);
+			sorted_diffs.push(r[0].diffs[parseInt(index)]);
+			sorted_diffs_string.push(r[0].diffs_string[parseInt(index)]);
+			sorted_positions.push(r[0].positions[parseInt(index)]);
 		}
 
 		data.push({
@@ -397,7 +397,7 @@ tour_de_france_vis.prototype.setData = function(rawdata)
 	var pos_paths = _this.g.selectAll(".pos_paths").data(data)
 	var diff_paths = _this.g.selectAll(".diff_paths").data(data)
 
-	var graph_opacity = 0.8;
+	var graph_opacity = 0.5;
 					
 	pos_paths.enter()
 		.append("g")
@@ -422,6 +422,7 @@ tour_de_france_vis.prototype.setData = function(rawdata)
 		})
 		.style("fill", "#91bfdb")
 		.style("fill-opacity", graph_opacity)
+		.style("stroke", "black")
 
 	diff_paths.enter()
 		.append("g")
