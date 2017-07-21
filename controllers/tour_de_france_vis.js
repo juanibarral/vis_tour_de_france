@@ -233,6 +233,10 @@ var drawRiderInfo = function(_this, rider_index)
 {
 	if(_this.current_data && _this.current_data.length == 1)
 	{
+
+		var font_size = 12;
+		var rect_width = 80;
+
 		var rider_info = _this.g.append("g").attr("id", "current_rider_info");
 		rider_info.append("line")
 			.attr("x1", _this.scaleX(rider_index))
@@ -241,20 +245,42 @@ var drawRiderInfo = function(_this, rider_index)
 			.attr("y2", _this.diffScaleY(_this.current_data[0].diffs[rider_index]))
 			.style("stroke", "black");
 
-		rider_info.append("text")
-			.attr("x", _this.scaleX(rider_index))
-			.attr("y", _this.diffScaleY(_this.current_data[0].diffs[rider_index]))	
-			//.style("font-size", "black");
-			.style("text-anchor", "middle")
-			.text(_this.current_data[0].diffs_string[rider_index])
+		rider_info.append("rect")
+			.attr("x", _this.scaleX(rider_index) - (rect_width / 2))
+			.attr("y", _this.diffScaleY(_this.current_data[0].diffs[rider_index]) - (font_size + 6))	
+			.attr("rx", 10)
+			.attr("ry", 10)
+			.attr("width", rect_width)
+			.attr("height", font_size + 6)
+			.style("fill", "#EEE")
 
 		rider_info.append("text")
 			.attr("x", _this.scaleX(rider_index))
-			.attr("y", _this.posScaleY(_this.current_data[0].positions[rider_index]))
-			//.style("font-size", "black");
+			.attr("y", _this.diffScaleY(_this.current_data[0].diffs[rider_index]) - ((font_size + 6) / 2))	
+			.style("font-size", font_size + "px")
 			.style("text-anchor", "middle")
-			.style("alignment-baseline","hanging")
-			.text(_this.current_data[0].positions[rider_index])
+			.style("alignment-baseline","middle")
+			.text(_this.current_data[0].diffs_string[rider_index])
+
+
+		
+
+		rider_info.append("rect")
+			.attr("x", _this.scaleX(rider_index) - (rect_width / 2))
+			.attr("y", _this.posScaleY(_this.current_data[0].positions[rider_index]))	
+			.attr("rx", 10)
+			.attr("ry", 10)
+			.attr("width", rect_width)
+			.attr("height", font_size + 6)
+			.style("fill", "#DDD")
+
+		rider_info.append("text")
+			.attr("x", _this.scaleX(rider_index))
+			.attr("y", _this.posScaleY(_this.current_data[0].positions[rider_index]) + ((font_size + 6) / 2))
+			.style("text-anchor", "middle")
+			.style("alignment-baseline","middle")
+			.style("font-size", font_size + "px")
+			.text("Pos: " + _this.current_data[0].positions[rider_index])
 	}
 }
 
