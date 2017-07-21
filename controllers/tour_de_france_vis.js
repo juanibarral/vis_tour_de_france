@@ -51,6 +51,10 @@ var tour_de_france_vis = function(params){
 	this.posScaleY = undefined;
 	this.diffScaleY = undefined;
 
+	this.icons = {
+		podium : "images/podium.png",
+		time : "images/chrono.png"
+	}
 
 	this.stage_types = 
 	{
@@ -73,7 +77,7 @@ var tour_de_france_vis = function(params){
 			label : "chrono",
 			color : "#ddd",
 			icon  : "images/20px-Time_Trial.png"
-		},
+		}
 	}
 
 	this.stages = [];
@@ -130,7 +134,19 @@ var drawLegend = function(_this)
 		.style("stroke", "black")
 		.style("stroke-width", 1)
 
-	
+	_this.g.append("svg:image")
+		.attr("xlink:href", _this.icons.time)
+		.attr("width", 30)
+		.attr("height", 30)
+		.attr("x", 25)
+		.attr("y", _this.padding.top + (_this.chart.height * 0.25) - 25)
+
+	_this.g.append("svg:image")
+		.attr("xlink:href", _this.icons.podium)
+		.attr("width", 30)
+		.attr("height", 30)
+		.attr("x", 25)
+		.attr("y", _this.padding.top + (_this.chart.height * 0.75) - 25)
 
 }
 
